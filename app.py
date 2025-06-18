@@ -13,20 +13,32 @@ st.set_page_config(
 )
 
 
-# --- LOAD PRE-COMPUTED RESULTS ---
-# We cache the data so it's only loaded once when the app starts.
 @st.cache_data
 def load_analysis():
-    """Loads the pre-computed analysis results from Phase 2."""
+    """Loads the pre-computed analysis results from a GitHub Release URL."""
+    
+    # --- IMPORTANT: PASTE THE URL YOU COPIED FROM GITHUB RELEASES HERE ---
+    ANALYSIS_URL = "https://github.com/StudyBeeTutoring/assemblyai/releases/download/v2.0.0/un_analysis_results.joblib"
+
     try:
-        # This single file contains all the decade-by-decade results.
-        return joblib.load('un_analysis_results.joblib')
-    except FileNotFoundError:
+        # To load a joblib file from a URL, we first download its content
+        response = requests.get(ANALYSIS_URL)
+        response.raise_for_status() # This will raise an error if the download fails
+
+        # We then write the downloaded content to a temporary file in memory
+        with open("un_analysis_results.joblib", "wb") as f:
+            f.write(response.content)
+        
+        # Now we can load the result from that temporary file
+        results = joblib.load('un_analysis_results.joblib')
+        return results
+
+    except Exception as e:
+        st.error(f"Error loading analysis file from URL: {e}")
+        st.error(f"Please check the URL in your app.py: {ANALYSIS_URL}")
         return None
 
-
 results_by_decade = load_analysis()
-
 # --- UI & VISUALIZATION ---
 
 st.title("🌐 The Assembly AI")
