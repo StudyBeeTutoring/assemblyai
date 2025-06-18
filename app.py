@@ -3,7 +3,7 @@ import streamlit as st
 import joblib
 import plotly.express as px
 import pandas as pd  # We need pandas for one small data manipulation
-
+import requests
 # --- CONFIGURATION ---
 # Set the page configuration as the very first Streamlit command
 st.set_page_config(
